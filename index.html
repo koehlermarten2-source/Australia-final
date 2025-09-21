@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Australia Quiz — 15 Questions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+  <div class="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-6">
+    <header class="mb-4 text-center">
+      <h1 class="text-3xl font-bold">🇦🇺 Australia Quiz</h1>
+      <p class="text-sm text-gray-600 mt-1">15 Questions — test your knowledge</p>
+    </header>
+
+    <main id="quiz-area" class="space-y-4">
+      <!-- Quiz will be inserted here -->
+    </main>
+
+    <div class="mt-6 flex gap-3">
+      <button id="submit-btn" class="flex-1 bg-blue-600 text-white py-2 rounded-xl font-semibold">Check Answers</button>
+      <button id="restart-btn" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-xl font-semibold">Restart</button>
+    </div>
+
+    <div id="result" class="mt-4 text-center text-lg font-bold"></div>
+    <div id="explanations" class="mt-3 text-sm text-gray-700"></div>
+  </div>
+
+  <script>
+    // 15 quiz questions
+    const quizQuestions = [
+      {
+        question: "How long have Aboriginal people lived in Australia?",
+        answers: { a: "Over 1,000 years", b: "Over 60,000 years", c: "Over 500 years" },
+        correct: "b",
+        explanation: "Archaeological and genetic evidence points to at least ~60,000 years."
+      },
+      {
+        question: "When did the First Fleet arrive in Australia?",
+        answers: { a: "1770", b: "1788", c: "1801" },
+        correct: "b",
+        explanation: "The First Fleet arrived in 1788 at Sydney Cove (Port Jackson)."
+      },
+      {
+        question: "What was the 'Convict Era' in Australia?",
+        answers: { a: "The period when convicts were transported to Australia", b: "The Gold Rush era", c: "The Independence era" },
+        correct: "a",
+        explanation: "It refers to the large-scale deportation of convicts (late 1700s–1800s)."
+      },
+      {
+        question: "What were the Frontier Wars?",
+        answers: { a: "Conflicts between settlers and Aboriginal peoples", b: "Wars with New Zealand", c: "World War II battles" },
+        correct: "a",
+        explanation: "Violent conflicts during colonisation between European settlers and Indigenous Australians."
+      },
+      {
+        question: "When was the Commonwealth of Australia founded?",
+        answers: { a: "1901", b: "1850", c: "1914" },
+        correct: "a",
+        explanation: "On 1 January 1901, the colonies united as the Commonwealth of Australia."
+      },
+      {
+        question: "Which animal is a national symbol of Australia and appears on its coat of arms?",
+        answers: { a: "Bear", b: "Kangaroo", c: "Penguin" },
+        correct: "b",
+        explanation: "The kangaroo is one of the most iconic national symbols of Australia."
+      },
+      {
+        question: "What does 'ANZAC' stand for?",
+        answers: { a: "Australian and New Zealand Army Corps (WWI)", b: "Australian currency", c: "A port city" },
+        correct: "a",
+        explanation: "ANZAC refers to troops from Australia and New Zealand, famous for Gallipoli in 1915."
+      },
+      {
+        question: "When did the Australian Gold Rush begin (approximately)?",
+        answers: { a: "Around 1850", b: "Around 1750", c: "Around 1950" },
+        correct: "a",
+        explanation: "From 1851 onwards, large gold deposits were discovered in Victoria and NSW."
+      },
+      {
+        question: "Which language has been spoken the longest in Australia?",
+        answers: { a: "English", b: "Aboriginal languages", c: "French" },
+        correct: "b",
+        explanation: "Indigenous languages were spoken for tens of thousands of years before European arrival."
+      },
+      {
+        question: "Which policy shaped Australia's immigration system until the mid-20th century?",
+        answers: { a: "White Australia Policy", b: "Open Borders Policy", c: "Schengen Agreement" },
+        correct: "a",
+        explanation: "The 'White Australia Policy' restricted non-European immigration until it was dismantled."
+      },
+      {
+        question: "Which ocean lies west of Australia?",
+        answers: { a: "Atlantic Ocean", b: "Indian Ocean", c: "Pacific Ocean" },
+        correct: "b",
+        explanation: "The Indian Ocean lies to the west of Australia."
+      },
+      {
+        question: "Which famous rock formation is in central Australia?",
+        answers: { a: "Uluru / Ayers Rock", b: "Mount Everest", c: "Table Mountain" },
+        correct: "a",
+        explanation: "Uluru, also known as Ayers Rock, is a sandstone monolith in the Northern Territory."
+      },
+      {
+        question: "Which two cities are the largest in Australia by population?",
+        answers: { a: "Sydney and Melbourne", b: "Perth and Darwin", c: "Hobart and Canberra" },
+        correct: "a",
+        explanation: "Sydney and Melbourne are Australia's most populous cities."
+      },
+      {
+        question: "What is the Australian parliament building in Canberra called?",
+        answers: { a: "Parliament House", b: "Buckingham Palace", c: "The Capitol" },
+        correct: "a",
+        explanation: "Australia's parliament is called Parliament House, located in Canberra."
+      },
+      {
+        question: "What is remembered on 26 January each year in Australia (controversial)?",
+        answers: { a: "Australia Day (arrival of the First Fleet)", b: "Independence Day", c: "Labour Day" },
+        correct: "a",
+        explanation: "Australia Day marks the First Fleet’s arrival in 1788, but it is controversial for Indigenous Australians."
+      }
+    ];
+
+    // DOM elements
+    const quizArea = document.getElementById('quiz-area');
+    const submitBtn = document.getElementById('submit-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const resultDiv = document.getElementById('result');
+    const explanationsDiv = document.getElementById('explanations');
+
+    function buildQuiz() {
+      quizArea.innerHTML = '';
+      quizQuestions.forEach((q, idx) => {
+        const wrapper = document.createElement('section');
+        wrapper.className = 'p-4 rounded-lg border border-gray-100 bg-white';
+        wrapper.id = `q-${idx}`;
+
+        const qTitle = document.createElement('p');
+        qTitle.className = 'font-semibold mb-2';
+        qTitle.textContent = `${idx + 1}. ${q.question}`;
+        wrapper.appendChild(qTitle);
+
+        const answersDiv = document.createElement('div');
+        answersDiv.className = 'space-y-2';
+        for (const key in q.answers) {
+          const label = document.createElement('label');
+          label.className = 'flex items-center gap-3 p-2 rounded-md cursor-pointer hover:bg-gray-50';
+
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = `question${idx}`;
+          radio.value = key;
+          radio.className = 'w-4 h-4';
+
+          const span = document.createElement('span');
+          span.className = 'text-sm';
+          span.textContent = `${key.toUpperCase()}: ${q.answers[key]}`;
+
+          label.appendChild(radio);
+          label.appendChild(span);
+          answersDiv.appendChild(label);
+        }
+
+        wrapper.appendChild(answersDiv);
+        quizArea.appendChild(wrapper);
+      });
+
+      // Reset result area
+      resultDiv.textContent = '';
+      explanationsDiv.innerHTML = '';
+    }
+
+    function showResults() {
+      let score = 0;
+      const explanations = [];
+      quizQuestions.forEach((q, idx) => {
+        const container = document.getElementById(`q-${idx}`);
+        const selected = container.querySelector(`input[name="question${idx}"]:checked`);
+        const userAnswer = selected ? selected.value : null;
+
+        // Reset classes
+        container.classList.remove('bg-green-50', 'bg-red-50', 'border-green-300', 'border-red-300');
+
+        if (userAnswer === q.correct) {
+          score++;
+          container.classList.add('bg-green-50', 'border-green-300');
+        } else {
+          container.classList.add('bg-red-50', 'border-red-300');
+        }
+
+        explanations.push({
+          qnum: idx + 1,
+          correct: q.correct.toUpperCase(),
+          correctText: q.answers[q.correct],
+          user: userAnswer ? userAnswer.toUpperCase() : '—',
+          userText: userAnswer ? q.answers[userAnswer] : 'No answer',
+          explanation: q.explanation || ''
+        });
+      });
+
+      resultDiv.textContent = `You got ${score} out of ${quizQuestions.length} correct!`;
+
+      // Show explanations
+      explanationsDiv.innerHTML = '';
+      explanations.forEach(ex => {
+        const div = document.createElement('div');
+        div.className = 'mb-2 p-2 rounded-md bg-gray-50';
+        div.innerHTML = `<strong>Question ${ex.qnum} — Correct: ${ex.correct} (${ex.correctText})</strong><br>
+                         Your answer: ${ex.user} (${ex.userText})<br>
+                         <em>${ex.explanation}</em>`;
+        explanationsDiv.appendChild(div);
+      });
+
+      resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    submitBtn.addEventListener('click', showResults);
+    restartBtn.addEventListener('click', buildQuiz);
+
+    // Initial build
+    buildQuiz();
+  </script>
+</body>
+</html>
